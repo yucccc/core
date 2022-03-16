@@ -28,6 +28,11 @@ export let trackOpBit = 1
  * This value is chosen to enable modern JS engines to use a SMI on all platforms.
  * When recursion depth is greater, fall back to using a full cleanup.
  */
+/**
+ * 按位跟踪标记最多支持 30 级递归。
+ * 选择此值是为了使现代 JS 引擎能够在所有平台上使用 SMI。
+ * 当递归深度更大时，回退到使用完全清理。
+ */
 const maxMarkerBits = 30
 
 export type EffectScheduler = (...args: any[]) => any
@@ -198,7 +203,7 @@ export function resetTracking() {
   const last = trackStack.pop()
   shouldTrack = last === undefined ? true : last
 }
-
+// track 追踪
 export function track(target: object, type: TrackOpTypes, key: unknown) {
   if (shouldTrack && activeEffect) {
     let depsMap = targetMap.get(target)
@@ -207,6 +212,7 @@ export function track(target: object, type: TrackOpTypes, key: unknown) {
     }
     let dep = depsMap.get(key)
     if (!dep) {
+      // 原文
       depsMap.set(key, (dep = createDep()))
     }
 
@@ -225,6 +231,7 @@ export function trackEffects(
   let shouldTrack = false
   if (effectTrackDepth <= maxMarkerBits) {
     if (!newTracked(dep)) {
+      // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_OR_assignment
       dep.n |= trackOpBit // set newly tracked
       shouldTrack = !wasTracked(dep)
     }
@@ -248,7 +255,7 @@ export function trackEffects(
     }
   }
 }
-
+// 触发
 export function trigger(
   target: object,
   type: TriggerOpTypes,

@@ -35,6 +35,8 @@ const rendererOptions = extend({ patchProp }, nodeOps)
 
 // lazy create the renderer - this makes core renderer logic tree-shakable
 // in case the user only imports reactivity utilities from Vue.
+// 延时创建渲染器，当用户只依赖响应式包的时候，可以通过 tree-shaking 移除核心渲染逻辑相关的代码
+
 let renderer: Renderer<Element | ShadowRoot> | HydrationRenderer
 
 let enabledHydration = false
@@ -64,6 +66,7 @@ export const hydrate = ((...args) => {
 }) as RootHydrateFunction
 
 export const createApp = ((...args) => {
+    // ensureRenderer用于创建一个渲染器
   const app = ensureRenderer().createApp(...args)
 
   if (__DEV__) {
@@ -72,6 +75,7 @@ export const createApp = ((...args) => {
   }
 
   const { mount } = app
+    // 重写Mout方法
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
     const container = normalizeContainer(containerOrSelector)
     if (!container) return

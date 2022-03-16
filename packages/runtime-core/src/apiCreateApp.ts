@@ -173,12 +173,13 @@ export type CreateAppFunction<HostElement> = (
 ) => App<HostElement>
 
 let uid = 0
-
 export function createAppAPI<HostElement>(
   render: RootRenderFunction,
   hydrate?: RootHydrateFunction
 ): CreateAppFunction<HostElement> {
+  //  createApp 方法接受的两个参数：根组件的对象和 prop
   return function createApp(rootComponent, rootProps = null) {
+    //  != null 不是 null 或者 undefind
     if (rootProps != null && !isObject(rootProps)) {
       __DEV__ && warn(`root props passed to app.mount() must be an object.`)
       rootProps = null
@@ -210,15 +211,17 @@ export function createAppAPI<HostElement>(
           )
         }
       },
-
+      // 插件的实现逻辑
       use(plugin: Plugin, ...options: any[]) {
         if (installedPlugins.has(plugin)) {
           __DEV__ && warn(`Plugin has already been applied to target app.`)
         } else if (plugin && isFunction(plugin.install)) {
           installedPlugins.add(plugin)
+          // 有install的话 直接install 注册
           plugin.install(app, ...options)
         } else if (isFunction(plugin)) {
           installedPlugins.add(plugin)
+          // 没有的话直接调用
           plugin(app, ...options)
         } else if (__DEV__) {
           warn(
