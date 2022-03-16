@@ -77,10 +77,14 @@ export const createApp = ((...args) => {
   const { mount } = app
     // 重写Mout方法
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
+    // 标准化容器 普通web环境下 其实就是获得了 一个dom元素 如果传入了string 那就会执行 document.querySelector
     const container = normalizeContainer(containerOrSelector)
     if (!container) return
 
+    // _component 是从createApp返回的
+    
     const component = app._component
+    // 如组件对象没有定义 render 函数和 template 模板，则取容器的 innerHTML 作为组件模板内容
     if (!isFunction(component) && !component.render && !component.template) {
       // __UNSAFE__
       // Reason: potential execution of JS expressions in in-DOM template.
@@ -102,8 +106,9 @@ export const createApp = ((...args) => {
       }
     }
 
-    // clear content before mounting
+    // clear content before mounting 挂载前清空容器内容
     container.innerHTML = ''
+    // 真正的挂载
     const proxy = mount(container, false, container instanceof SVGElement)
     if (container instanceof Element) {
       container.removeAttribute('v-cloak')
