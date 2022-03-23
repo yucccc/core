@@ -348,13 +348,14 @@ function baseCreateRenderer(
     cloneNode: hostCloneNode,
     insertStaticContent: hostInsertStaticContent
   } = options
-
+ 
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
+  // 打补丁
   const patch: PatchFn = (
-    n1,
-    n2,
-    container,
+    n1,// 旧节点
+    n2,// 新节点
+    container, // 被挂载的容器
     anchor = null,
     parentComponent = null,
     parentSuspense = null,
@@ -362,11 +363,14 @@ function baseCreateRenderer(
     slotScopeIds = null,
     optimized = __DEV__ && isHmrUpdating ? false : !!n2.dynamicChildren
   ) => {
+    // 新旧节点相同 啥也不干
     if (n1 === n2) {
       return
     }
 
     // patching & not same type, unmount old tree
+    // 如果存在新旧节点, 且新旧节点类型不同，则销毁旧节点
+    //  isSameVNodeType 通过 新旧type 和key 判断 n1.type === n2.type && n1.key === n2.key
     if (n1 && !isSameVNodeType(n1, n2)) {
       anchor = getNextHostNode(n1)
       unmount(n1, parentComponent, parentSuspense, true)
@@ -1535,9 +1539,6 @@ function baseCreateRenderer(
           devtoolsComponentUpdated(instance)
         }
 
-        if (__DEV__) {
-          popWarningContext()
-        }
       }
     }
 
