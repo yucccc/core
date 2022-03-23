@@ -345,6 +345,11 @@ function parseCDATA(
 
   return nodes
 }
+/**
+ * 解析注释
+ * @param context
+ * @returns
+ */
 
 function parseComment(context: ParserContext): CommentNode {
   __TEST__ && assert(startsWith(context.source, '<!--'))

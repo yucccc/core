@@ -20,7 +20,6 @@ const targetMap = new WeakMap<any, KeyToDepMap>()
 
 // The number of effects currently being tracked recursively.
 let effectTrackDepth = 0
-
 export let trackOpBit = 1
 
 /**
@@ -174,7 +173,9 @@ export function effect<T = any>(
     extend(_effect, options)
     if (options.scope) recordEffectScope(_effect, options.scope)
   }
+  // 没传配置或者传了options.lazy = false
   if (!options || !options.lazy) {
+    // 执行一下
     _effect.run()
   }
   const runner = _effect.run.bind(_effect) as ReactiveEffectRunner
@@ -187,8 +188,9 @@ export function stop(runner: ReactiveEffectRunner) {
 }
 
 export let shouldTrack = true
+// 追踪栈
 const trackStack: boolean[] = []
-
+// 暂停追中
 export function pauseTracking() {
   trackStack.push(shouldTrack)
   shouldTrack = false
@@ -212,7 +214,7 @@ export function track(target: object, type: TrackOpTypes, key: unknown) {
     }
     let dep = depsMap.get(key)
     if (!dep) {
-      // 原文
+      // createDep 给 Set加了一点属性
       depsMap.set(key, (dep = createDep()))
     }
 
@@ -347,7 +349,7 @@ export function triggerEffects(
   dep: Dep | ReactiveEffect[],
   debuggerEventExtraInfo?: DebuggerEventExtraInfo
 ) {
-  // spread into array for stabilization
+  // spread into array for stabilizationp
   for (const effect of isArray(dep) ? dep : [...dep]) {
     if (effect !== activeEffect || effect.allowRecurse) {
       if (__DEV__ && effect.onTrigger) {
