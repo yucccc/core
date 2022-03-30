@@ -65,11 +65,10 @@ describe('reactivity/effect', () => {
 
   it('should observe delete operations', () => {
     let dummy
-    const obj = reactive({ prop: 'value' })
+    const obj = reactive<{ prop?: string }>({ prop: 'value' })
     effect(() => (dummy = obj.prop))
 
     expect(dummy).toBe('value')
-    // @ts-ignore
     delete obj.prop
     expect(dummy).toBe(undefined)
   })

@@ -180,6 +180,7 @@ export function createAppAPI<HostElement>(
   //  createApp 方法接受的两个参数：根组件的对象和 prop
   return function createApp(rootComponent, rootProps = null) {
     //  != null 不是 null 或者 undefind
+    // 支持你传null undefined {}
     if (rootProps != null && !isObject(rootProps)) {
       __DEV__ && warn(`root props passed to app.mount() must be an object.`)
       rootProps = null
@@ -189,7 +190,6 @@ export function createAppAPI<HostElement>(
     const installedPlugins = new Set()
 
     let isMounted = false
-
     const app: App = (context.app = {
       _uid: uid++,
       _component: rootComponent as ConcreteComponent,
@@ -203,7 +203,7 @@ export function createAppAPI<HostElement>(
       get config() {
         return context.config
       },
-
+      // 配置不可变
       set config(v) {
         if (__DEV__) {
           warn(
@@ -215,15 +215,21 @@ export function createAppAPI<HostElement>(
       use(plugin: Plugin, ...options: any[]) {
         if (installedPlugins.has(plugin)) {
           __DEV__ && warn(`Plugin has already been applied to target app.`)
-        } else if (plugin && isFunction(plugin.install)) {
+        }
+        // 有install的话 直接install 注册
+        else if (plugin && isFunction(plugin.install)) {
           installedPlugins.add(plugin)
-          // 有install的话 直接install 注册
+
           plugin.install(app, ...options)
-        } else if (isFunction(plugin)) {
+        }
+        // 没有的话直接调用
+        else if (isFunction(plugin)) {
           installedPlugins.add(plugin)
-          // 没有的话直接调用
+
           plugin(app, ...options)
-        } else if (__DEV__) {
+        }
+        // 不合格的插件格式
+        else if (__DEV__) {
           warn(
             `A plugin must either be a function or an object with an "install" ` +
               `function.`
@@ -231,7 +237,7 @@ export function createAppAPI<HostElement>(
         }
         return app
       },
-
+      // 只是添加 在哪里执行呢?
       mixin(mixin: ComponentOptions) {
         if (__FEATURE_OPTIONS_API__) {
           if (!context.mixins.includes(mixin)) {
@@ -355,6 +361,7 @@ export function createAppAPI<HostElement>(
     if (__COMPAT__) {
       installAppCompatProperties(app, context, render)
     }
+    // 最终返回了一个对象
 
     return app
   }

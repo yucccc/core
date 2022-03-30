@@ -42,6 +42,7 @@ let renderer: Renderer<Element | ShadowRoot> | HydrationRenderer
 let enabledHydration = false
 
 function ensureRenderer() {
+  // 使用了一个单例模式 renderer被创建后下次访问直接返回
   return (
     renderer ||
     (renderer = createRenderer<Node, Element | ShadowRoot>(rendererOptions))
@@ -66,7 +67,7 @@ export const hydrate = ((...args) => {
 }) as RootHydrateFunction
 
 export const createApp = ((...args) => {
-    // ensureRenderer用于创建一个渲染器
+  // ensureRenderer用于创建一个渲染器
   const app = ensureRenderer().createApp(...args)
 
   if (__DEV__) {
@@ -75,14 +76,13 @@ export const createApp = ((...args) => {
   }
 
   const { mount } = app
-    // 重写Mout方法
+  // 重写Mout方法
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
     // 标准化容器 普通web环境下 其实就是获得了 一个dom元素 如果传入了string 那就会执行 document.querySelector
     const container = normalizeContainer(containerOrSelector)
     if (!container) return
 
     // _component 是从createApp返回的
-    
     const component = app._component
     // 如组件对象没有定义 render 函数和 template 模板，则取容器的 innerHTML 作为组件模板内容
     if (!isFunction(component) && !component.render && !component.template) {

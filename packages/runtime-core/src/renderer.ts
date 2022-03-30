@@ -332,7 +332,7 @@ function baseCreateRenderer(
   if (__DEV__ || __FEATURE_PROD_DEVTOOLS__) {
     setDevtoolsHook(target.__VUE_DEVTOOLS_GLOBAL_HOOK__, target)
   }
-
+  // 将依赖于浏览器的api抽离 然后通过配置的方式传入 为的是可以由外部自定义渲染逻辑
   const {
     insert: hostInsert,
     remove: hostRemove,
@@ -348,13 +348,13 @@ function baseCreateRenderer(
     cloneNode: hostCloneNode,
     insertStaticContent: hostInsertStaticContent
   } = options
- 
+
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
   // 打补丁
   const patch: PatchFn = (
-    n1,// 旧节点
-    n2,// 新节点
+    n1, // 旧节点
+    n2, // 新节点
     container, // 被挂载的容器
     anchor = null,
     parentComponent = null,
@@ -1538,7 +1538,6 @@ function baseCreateRenderer(
         if (__DEV__ || __FEATURE_PROD_DEVTOOLS__) {
           devtoolsComponentUpdated(instance)
         }
-
       }
     }
 

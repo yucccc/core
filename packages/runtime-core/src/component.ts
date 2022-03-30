@@ -910,6 +910,7 @@ export function createSetupContext(
   }
 }
 
+// 这个的作用是什么
 export function getExposeProxy(instance: ComponentInternalInstance) {
   if (instance.exposed) {
     return (

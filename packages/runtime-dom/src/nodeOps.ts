@@ -29,9 +29,9 @@ export const nodeOps: Omit<RendererOptions<Node, Element>, 'patchProp'> = {
 
     return el
   },
-
+  // PERF 可以优化成 createText: doc.createTextNode this 有问题
   createText: text => doc.createTextNode(text),
-
+  // PERF 可以优化成 createText: doc.createComment,
   createComment: text => doc.createComment(text),
 
   setText: (node, text) => {
@@ -45,7 +45,7 @@ export const nodeOps: Omit<RendererOptions<Node, Element>, 'patchProp'> = {
   parentNode: node => node.parentNode as Element | null,
 
   nextSibling: node => node.nextSibling,
-
+  // PERF 同上
   querySelector: selector => doc.querySelector(selector),
 
   setScopeId(el, id) {
