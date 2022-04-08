@@ -177,16 +177,21 @@ export function createAppAPI<HostElement>(
   render: RootRenderFunction,
   hydrate?: RootHydrateFunction
 ): CreateAppFunction<HostElement> {
-  //  createApp 方法接受的两个参数：根组件的对象和 prop
+  /**
+   * 返回了一个闭包函数 createApp
+   * 方法接受的两个参数：根组件的对象和 rootProps
+   * 方法内部调用了 createAppAPI 传递进来的 render hydrate
+   */
   return function createApp(rootComponent, rootProps = null) {
-    //  != null 不是 null 或者 undefind
-    // 支持你传null undefined {}
+    //
+    // 容错判断 支持你传null undefined 或者 对象
     if (rootProps != null && !isObject(rootProps)) {
       __DEV__ && warn(`root props passed to app.mount() must be an object.`)
       rootProps = null
     }
-
+    // 定义一些初始值
     const context = createAppContext()
+    // 插件机制
     const installedPlugins = new Set()
 
     let isMounted = false
@@ -237,7 +242,7 @@ export function createAppAPI<HostElement>(
         }
         return app
       },
-      // 只是添加 在哪里执行呢?
+      // 全局mixin
       mixin(mixin: ComponentOptions) {
         if (__FEATURE_OPTIONS_API__) {
           if (!context.mixins.includes(mixin)) {
@@ -361,8 +366,8 @@ export function createAppAPI<HostElement>(
     if (__COMPAT__) {
       installAppCompatProperties(app, context, render)
     }
-    // 最终返回了一个对象
 
+    // 最终返回了一个对象
     return app
   }
 }

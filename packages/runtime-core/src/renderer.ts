@@ -293,6 +293,7 @@ export function createRenderer<
   HostNode = RendererNode,
   HostElement = RendererElement
 >(options: RendererOptions<HostNode, HostElement>) {
+  // 调用了 baseCreateRenderer 接收的参数格式如下 { patchProp: {...一些更新方法}, ...其他操作方法 }
   return baseCreateRenderer<HostNode, HostElement>(options)
 }
 
@@ -320,12 +321,14 @@ function baseCreateRenderer(
 // implementation
 function baseCreateRenderer(
   options: RendererOptions,
+  // 暂时不考虑这个参数
   createHydrationFns?: typeof createHydrationFunctions
 ): any {
   // compile-time feature flags check
   if (__ESM_BUNDLER__ && !__TEST__) {
     initFeatureFlags()
   }
+  // window
 
   const target = getGlobalThis()
   target.__VUE__ = true
@@ -2301,14 +2304,20 @@ function baseCreateRenderer(
   }
   // 渲染组件的核心逻辑
   const render: RootRenderFunction = (vnode, container, isSVG) => {
+    // 当vnode不存在 undefined 或者 null
     if (vnode == null) {
+      // 且旧有vnode存在 那么就认为是卸载
       if (container._vnode) {
+        // 执行卸载方法
         unmount(container._vnode, null, null, true)
       }
     } else {
+      // 否则就认为是更新 也称之为打补丁
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }
+    // 不管先
     flushPostFlushCbs()
+    // 存储一下 用于下次render时判断
     container._vnode = vnode
   }
 
@@ -2336,6 +2345,8 @@ function baseCreateRenderer(
   return {
     render,
     hydrate,
+    // 因此这里实际上返回了一个函数  function createApp(rootComponent, rootProps)
+    // 该函数接收两个参数 一个是根组件 rootComponent 一个是rootProps
     createApp: createAppAPI(render, hydrate)
   }
 }

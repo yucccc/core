@@ -30,7 +30,13 @@ declare module '@vue/reactivity' {
     runtimeDOMBailTypes: Node | Window
   }
 }
-
+/**
+ * nodeOps 比较简单 将web api封装起来 统一调用 目的是为了抹平其他平台的使用差异
+ * 这样做的好处就是不直接写死web操作方法到代码中 比如小程序也想使用vue 但是小程序可能有自己的dom操作实现
+ * 那么重写该底层方法就好了 不需要侵入式的修改
+ *
+ * patchProp 定义了一些更新属性的方法 比如如何更新css 如何更新style 因为这些vue帮我们提了一些内置的传递格式
+ */
 const rendererOptions = extend({ patchProp }, nodeOps)
 
 // lazy create the renderer - this makes core renderer logic tree-shakable
@@ -43,6 +49,7 @@ let enabledHydration = false
 
 function ensureRenderer() {
   // 使用了一个单例模式 renderer被创建后下次访问直接返回
+  // 这里重点需要关注 rendererOptions
   return (
     renderer ||
     (renderer = createRenderer<Node, Element | ShadowRoot>(rendererOptions))
