@@ -83,13 +83,14 @@ export const createApp = ((...args) => {
   }
 
   const { mount } = app
-  // 重写Mout方法
+  // 重写mount方法
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
-    // 标准化容器 普通web环境下 其实就是获得了 一个dom元素 如果传入了string 那就会执行 document.querySelector
+    // 标准化容器 普通web环境下 其实就是获得了 一个dom元素
+    // 如果传入了string 那就会执行 document.querySelector
     const container = normalizeContainer(containerOrSelector)
     if (!container) return
 
-    // _component 是从createApp返回的
+    // _component 是从createApp返回的 其实就是你传递的根App组件
     const component = app._component
     // 如组件对象没有定义 render 函数和 template 模板，则取容器的 innerHTML 作为组件模板内容
     if (!isFunction(component) && !component.render && !component.template) {

@@ -434,7 +434,6 @@ function createBaseVNode(
     dynamicChildren: null,
     appContext: null
   } as VNode
-
   if (needFullChildrenNormalization) {
     normalizeChildren(vnode, children)
     // normalize suspense children
@@ -501,7 +500,7 @@ function _createVNode(
     }
     type = Comment
   }
-
+  // 是否已经vnode了
   if (isVNode(type)) {
     // createVNode receiving an existing vnode. This happens in cases like
     // <component :is="vnode"/>
@@ -514,6 +513,7 @@ function _createVNode(
   }
 
   // class component normalization.
+  // 类的写法
   if (isClassComponent(type)) {
     type = type.__vccOpts
   }
@@ -521,6 +521,7 @@ function _createVNode(
   // 2.x async/functional component compat
   if (__COMPAT__) {
     type = convertLegacyComponent(type, currentRenderingInstance)
+
   }
 
   // class & style normalization.
@@ -542,6 +543,7 @@ function _createVNode(
   }
 
   // encode the vnode type information into a bitmap
+  // 为啥要用位移的方式表示呢
   const shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT
     : __FEATURE_SUSPENSE__ && isSuspense(type)
@@ -553,7 +555,7 @@ function _createVNode(
     : isFunction(type)
     ? ShapeFlags.FUNCTIONAL_COMPONENT
     : 0
-
+  //  shapeFlag & ShapeFlags.STATEFUL_COMPONENT 不等于0 ? 那为啥不直接判断 shapeFlag === 0
   if (__DEV__ && shapeFlag & ShapeFlags.STATEFUL_COMPONENT && isProxy(type)) {
     type = toRaw(type)
     warn(

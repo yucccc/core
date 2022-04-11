@@ -1,17 +1,37 @@
 <script src="../../dist/vue.global.js"/></script>
 
-<div id="app">
-  createApp
+<div id="app" >
+  <div @click="handleClick" @class="handleClick2">123</div>
 </div>
 
 <script>
   const { createApp, ref } = Vue
-  
+
   // App是一个组件 暂时使用空vnode表示
-  const App = {}
-  debugger
+  const App = {
+    name: 'App',
+    methods: {
+      handleClick() {
+        console.log(123)
+      }
+    },
+    setup() {
+      const handleClick = () => {
+        console.log('setup handleClick')
+      }
+      const handleClick2 = () => {
+         console.log('setup handleClick2')
+      }
+      return {
+        handleClick,
+        handleClick2
+      }
+    }
+  }
   createApp(App).mount('#app')
-  
+
+
 
 </script>
+
 

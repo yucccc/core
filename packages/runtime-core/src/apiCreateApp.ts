@@ -294,10 +294,13 @@ export function createAppAPI<HostElement>(
         isSVG?: boolean
       ): any {
         if (!isMounted) {
+          // 会在这里创建vnode
+
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
           )
+
           // store app context on the root VNode.
           // this will be set on the root instance on initial mount.
           vnode.appContext = context
@@ -312,6 +315,7 @@ export function createAppAPI<HostElement>(
           if (isHydrate && hydrate) {
             hydrate(vnode as VNode<Node, Element>, rootContainer as any)
           } else {
+            console.log('render')
             render(vnode, rootContainer, isSVG)
           }
           isMounted = true

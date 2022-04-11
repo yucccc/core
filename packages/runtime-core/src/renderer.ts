@@ -72,7 +72,7 @@ import { initFeatureFlags } from './featureFlags'
 import { isAsyncWrapper } from './apiAsyncComponent'
 import { isCompatEnabled } from './compat/compatConfig'
 import { DeprecationTypes } from './compat/compatConfig'
-
+let _index = 0
 export interface Renderer<HostElement = RendererElement> {
   render: RootRenderFunction<HostElement>
   createApp: CreateAppFunction<HostElement>
@@ -373,7 +373,7 @@ function baseCreateRenderer(
 
     // patching & not same type, unmount old tree
     // 如果存在新旧节点, 且新旧节点类型不同，则销毁旧节点
-    //  isSameVNodeType 通过 新旧type 和key 判断 n1.type === n2.type && n1.key === n2.key
+    // isSameVNodeType 通过 新旧type 和key 判断 n1.type === n2.type && n1.key === n2.key
     if (n1 && !isSameVNodeType(n1, n2)) {
       anchor = getNextHostNode(n1)
       unmount(n1, parentComponent, parentSuspense, true)
@@ -414,6 +414,8 @@ function baseCreateRenderer(
         )
         break
       default:
+        // 对象
+        console.log(n1, n2, container, _index++)
         if (shapeFlag & ShapeFlags.ELEMENT) {
           processElement(
             n1,
@@ -2312,6 +2314,7 @@ function baseCreateRenderer(
         unmount(container._vnode, null, null, true)
       }
     } else {
+      console.log('container._vnode', container._vnode)
       // 否则就认为是更新 也称之为打补丁
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }
