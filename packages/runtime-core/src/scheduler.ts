@@ -56,6 +56,8 @@ const RECURSION_LIMIT = 100
 type CountMap = Map<SchedulerJob, number>
 
 export function nextTick<T = void>(
+  // this 是个fake this
+  //  https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#specifying-the-type-of-this-for-functions
   this: T,
   fn?: (this: T) => void
 ): Promise<void> {

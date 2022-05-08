@@ -295,7 +295,6 @@ export function createAppAPI<HostElement>(
       ): any {
         if (!isMounted) {
           // 会在这里创建vnode
-
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps

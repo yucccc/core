@@ -15,13 +15,26 @@
     "esModuleInterop": true,
     "removeComments": false,
     "jsx": "preserve",
-    "lib": ["esnext", "dom"],
-    "types": ["jest", "puppeteer", "node"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "types": [
+      "jest",
+      "puppeteer",
+      "node"
+    ],
     "rootDir": ".",
     "paths": {
-      "@vue/compat": ["packages/vue-compat/src"],
-      "@vue/*": ["packages/*/src"],
-      "vue": ["packages/vue/src"]
+      "@vue/compat": [
+        "packages/vue-compat/src"
+      ],
+      "@vue/*": [
+        "packages/*/src"
+      ],
+      "vue": [
+        "packages/vue/src"
+      ]
     }
   },
   "include": [

@@ -237,7 +237,8 @@ export function isProxy(value: unknown): boolean {
 }
 
 export function toRaw<T>(observed: T): T {
-  const raw = observed && (observed as Target)[ReactiveFlags.RAW]
+  const raw = observed && (observed as Target)[ReactiveFlags.RAW] // 访问内部的 ））
+  // 递归调用了toRaw
   return raw ? toRaw(raw) : observed
 }
 

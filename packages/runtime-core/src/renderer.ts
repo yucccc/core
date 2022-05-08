@@ -72,7 +72,6 @@ import { initFeatureFlags } from './featureFlags'
 import { isAsyncWrapper } from './apiAsyncComponent'
 import { isCompatEnabled } from './compat/compatConfig'
 import { DeprecationTypes } from './compat/compatConfig'
-let _index = 0
 export interface Renderer<HostElement = RendererElement> {
   render: RootRenderFunction<HostElement>
   createApp: CreateAppFunction<HostElement>
@@ -414,9 +413,13 @@ function baseCreateRenderer(
         )
         break
       default:
-        // 对象
-        console.log(n1, n2, container, _index++)
+        console.info('shapeFlag', shapeFlag)
+
+        // 普通dom ShapeFlags.ELEMENT = 1
+        // 这个可以这么理解 因为ShapeFlags定义的除了ELEMENT 也就是1之外 其他与 & 1 都为false
         if (shapeFlag & ShapeFlags.ELEMENT) {
+          console.info('processElement')
+
           processElement(
             n1,
             n2,
@@ -428,7 +431,11 @@ function baseCreateRenderer(
             slotScopeIds,
             optimized
           )
-        } else if (shapeFlag & ShapeFlags.COMPONENT) {
+        }
+        // 组件 ShapeFlags.COMPONENT = 6  110
+        else if (shapeFlag & ShapeFlags.COMPONENT) {
+          console.info('processComponent组件')
+
           processComponent(
             n1,
             n2,
@@ -2314,7 +2321,6 @@ function baseCreateRenderer(
         unmount(container._vnode, null, null, true)
       }
     } else {
-      console.log('container._vnode', container._vnode)
       // 否则就认为是更新 也称之为打补丁
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }

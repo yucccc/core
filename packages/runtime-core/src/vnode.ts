@@ -521,7 +521,6 @@ function _createVNode(
   // 2.x async/functional component compat
   if (__COMPAT__) {
     type = convertLegacyComponent(type, currentRenderingInstance)
-
   }
 
   // class & style normalization.
@@ -544,6 +543,7 @@ function _createVNode(
 
   // encode the vnode type information into a bitmap
   // 为啥要用位移的方式表示呢
+
   const shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT
     : __FEATURE_SUSPENSE__ && isSuspense(type)

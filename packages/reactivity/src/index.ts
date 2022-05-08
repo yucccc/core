@@ -60,8 +60,8 @@ export {
   DebuggerEventExtraInfo
 } from './effect'
 export {
-  effectScope,
-  EffectScope,
+  effectScope, // 函数调用
+  EffectScope, // 需要自己new
   getCurrentScope,
   onScopeDispose
 } from './effectScope'

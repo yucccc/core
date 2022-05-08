@@ -30,13 +30,17 @@ type RefBase<T> = {
 
 export function trackRefValue(ref: RefBase<any>) {
   if (shouldTrack && activeEffect) {
+    // 转为原始值
     ref = toRaw(ref)
     if (__DEV__) {
-      trackEffects(ref.dep || (ref.dep = createDep()), {
-        target: ref,
-        type: TrackOpTypes.GET,
-        key: 'value'
-      })
+      trackEffects(
+        ref.dep || (ref.dep = createDep()),
+        __DEV__ && {
+          target: ref,
+          type: TrackOpTypes.GET,
+          key: 'value'
+        }
+      )
     } else {
       trackEffects(ref.dep || (ref.dep = createDep()))
     }
@@ -87,6 +91,8 @@ export function shallowRef(value?: unknown) {
 }
 
 function createRef(rawValue: unknown, shallow: boolean) {
+  // 如果传递进来的已经是ref 那么直接返回
+  // isRef的原理很很简单 就是判断rawValue 内部有没一个 __v_isRef属性为true 有的话就认为是ref
   if (isRef(rawValue)) {
     return rawValue
   }
@@ -102,16 +108,20 @@ class RefImpl<T> {
 
   constructor(value: T, public readonly __v_isShallow: boolean) {
     this._rawValue = __v_isShallow ? value : toRaw(value)
+    // 如果是深监听且是对象 那就用reactive包装一层
     this._value = __v_isShallow ? value : toReactive(value)
   }
 
   get value() {
+    // 访问的value的时候收集依赖
     trackRefValue(this)
     return this._value
   }
 
   set value(newVal) {
+    // this.__v_isShallow 是通过 public readonly __v_isShallow: boolean 挂载到this上的
     newVal = this.__v_isShallow ? newVal : toRaw(newVal)
+    // 检查设置的值是否发生了变化
     if (hasChanged(newVal, this._rawValue)) {
       this._rawValue = newVal
       this._value = this.__v_isShallow ? newVal : toReactive(newVal)
